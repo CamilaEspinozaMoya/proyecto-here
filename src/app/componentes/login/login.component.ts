@@ -4,6 +4,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../servicios/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router} from '@angular/router';
+import { ReactiveFormsModule } from '@angular/forms';
+
+export interface Perfil {
+  value: string;
+  viewValue: string;
+}
 
 @Component({
   selector: 'app-login',
@@ -14,6 +20,7 @@ import { Router} from '@angular/router';
 
 export class LoginComponent implements OnInit {
   authForm: FormGroup;
+  value: any;
 
   perfiles: Perfil[] = [
     {value: 'orgs', viewValue: 'Organización'},
@@ -22,7 +29,12 @@ export class LoginComponent implements OnInit {
   ];
 
   // Solicitamos en el constructor todas las cosas necesarias
-  constructor(private formBuilder: FormBuilder, public authService: AuthService, public snackBar: MatSnackBar, public router: Router) {
+  constructor(
+    private formBuilder: FormBuilder,
+    public reactive: ReactiveFormsModule,
+    public authService: AuthService,
+    public snackBar: MatSnackBar,
+    public router: Router) {
     this.createAuthForm();
   }
 
@@ -41,12 +53,10 @@ export class LoginComponent implements OnInit {
    * MatSnackBarModule
    */
 
-
   onLogin() {
     this.authService.login(this.authForm.value.email, this.authForm.value.password)
       .then(() => {
         // Login exitoso, así que celebramos con el usuario (?)
-        this.router.navigate(['/navbar']);
       })
       .catch(() => {
         // Algo salió mal, avisemos mejor para que reintente
@@ -73,9 +83,22 @@ export class LoginComponent implements OnInit {
           });
       });
   }
+
+  public loginSol() {
+    this.onLogin();
+    this.router.navigate(['/menu-solicitante']);
+  }
+
+  public loginVol() {
+    this.onLogin();
+    this.router.navigate(['/menu-voluntario']);
+  }
+
+  public loginOrg() {
+    this.onLogin();
+    this.router.navigate(['/menu-org']);
+  }
+
 }
 
-export interface Perfil {
-  value: string;
-  viewValue: string;
-}
+
